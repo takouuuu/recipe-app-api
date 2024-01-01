@@ -39,7 +39,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         """Handle getting or creating tags as needed"""
         auth_user = self.context['request'].user #use context coz we use serializer
         for tag in tags:
-            tag_obj, create = Tag.objects.get_or_create(
+            tag_obj, created = Tag.objects.get_or_create(
                 user=auth_user,
                 **tag, #get all the values in the tag instead of name = name['tag']
             )
@@ -49,7 +49,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         """Handle getting or creating ingredients as needed"""
         auth_user = self.context['request'].user
         for ingredient in ingredients:
-            ingredient_obj, create = Ingredient.objects.get_or_create( #create boolean to see if it was created or not.
+            ingredient_obj, created = Ingredient.objects.get_or_create( #create boolean to see if it was created or not.
                 user=auth_user,
                 **ingredient,
             )
@@ -90,4 +90,12 @@ class RecipeDetailSerializer(RecipeSerializer):
     class Meta(RecipeSerializer.Meta):
         fields = RecipeSerializer.Meta.fields + ['description']
 
+class RecipeImageSerializer(serializers.ModelSerializer):
+    """Serializer for uplaoding images to recipes."""
+
+    class Meta:
+        model = Recipe
+        fields = ['id','image']
+        read_only_fields = ['id']
+        extra_kwargs = {'image': {'required': 'True'}}
 
